@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import { getSongRecommendation } from '../services/musicRecommenderService'
+import { getGenres } from '../services/openaiService'
 
 const Home = () => {
     const [mood, setMood] = useState("");
-    const [recommendation, setRecommendation] = useState("");
+    const [genres, setGenres] = useState("");
   
     const handleSubmit = async (e) => {
       e.preventDefault();
   
       try {
-        const response = getSongRecommendation(mood);
-        setRecommendation(response);
+        const response = getGenres(mood);
+        setGenres(response);
       } catch (error) {
         console.error("Error fetching recommendation:", error);
-        setRecommendation("Failed to get a recommendation.");
+        setGenres("Failed to get a recommendation.");
       }
     };
   
@@ -29,7 +29,7 @@ const Home = () => {
           />
           <button type="submit">Get Recommendation</button>
         </form>
-        {recommendation && <p>Recommended Song: {recommendation}</p>}
+        {genres && <p>Recommended Genres: {genres}</p>}
       </div>
     );
 }

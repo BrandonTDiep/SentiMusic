@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const spotifyController = require("../controller/spotifyController");
 
-// POST /recommend-song
+// GET /login
 router.get('/login', spotifyController.getLogin)
 
 

@@ -8,7 +8,7 @@ const client = new OpenAI({
   
 
 module.exports = {
-    getSongRecommendation: async (req, res) => {
+    getGenres: async (req, res) => {
         const mood = req.body.mood
         //const { mood } = req.body;
 
