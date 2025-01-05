@@ -1,18 +1,19 @@
 const SpotifyWebApi = require('spotify-web-api-node');
+const generateRandomString = require('../utils/generateRandomString');
 
 
 // Initialize the Spotify API with credentials from environment variables.
 const spotifyApi = new SpotifyWebApi({
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    redirectUri: process.env.REDIRECT_URL
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.SPOTIFY_REDIRECT_URL
 });
 
 
 module.exports = {
     getLogin: async (req, res) => {
 
-        let state = generateRandomString(16);
+        const state = generateRandomString(16);
         const scopes = ['user-read-private', 'user-read-email', 'user-read-playback-state', 'user-modify-playback-state']
 
       
@@ -23,8 +24,6 @@ module.exports = {
     },
 
     getCallback: async (req, res) => {
-        
-
         // Extract the error, code, and state from the query parameters.
         const error = req.query.error;
         const code = req.query.code;
