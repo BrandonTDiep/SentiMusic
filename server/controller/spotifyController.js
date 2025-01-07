@@ -16,9 +16,12 @@ module.exports = {
         const state = generateRandomString(16);
         const scopes = ['user-read-private', 'user-read-email', 'user-read-playback-state', 'user-modify-playback-state']
 
+        // Create the authorization URL
+        const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+        console.log(authorizeURL)
       
         // Create the authorization URL
-        res.redirect(spotifyApi.createAuthorizeURL(scopes, state))
+        res.redirect(authorizeURL)
         
 
     },
@@ -38,34 +41,53 @@ module.exports = {
             const refreshToken = data.body['refresh_token'];
             const expiresIn = data.body['expires_in'];
 
-            console.log('The token expires in ' + data.body['expires_in']);
-            console.log('The access token is ' + data.body['access_token']);
-            console.log('The refresh token is ' + data.body['refresh_token']);
+            console.log('The token expires in ' + data.body['expires_in'] + '\n');
+            console.log('The access token is ' + data.body['access_token'] + '\n');
+            console.log('The refresh token is ' + data.body['refresh_token'] + '\n');
     
             // Set the access token and refresh token on the Spotify API object.
             spotifyApi.setAccessToken(accessToken);
             spotifyApi.setRefreshToken(refreshToken);
 
-            // Send a success message to the user.
-            res.send('Login successful!');
-
             // Refresh the access token periodically before it expires.
             setInterval(async () => {
-                try{
+                try {
                     const data = await spotifyApi.refreshAccessToken();
                     const accessTokenRefreshed = data.body['access_token'];
                     spotifyApi.setAccessToken(accessTokenRefreshed);
                 } catch (error) {
-                    console.error('Could not refresh the access token:', error)
-
+                    console.error('Could not refresh the access token:', error);
                 }
-                
             }, expiresIn / 2 * 1000); // Refresh halfway before expiration.
+
+            // Send tokens and expiration time to the frontend
+
+            res.redirect(`${process.env.CLIENT_REDIRECT}/callback?accessToken=${accessToken}&refreshToken=${refreshToken}&expiresIn=${expiresIn}`);
+
 
         }).catch(error =>{
             console.error('Error getting Tokens:', error);
             res.send('Error getting tokens');
         })
+    },
+
+    refreshToken: async (req, res) => {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return res.status(400).send('Refresh token missing');
+        }
+
+        try {
+            const data = await spotifyApi.refreshAccessToken(refreshToken);
+            const accessToken = data.body['access_token'];
+            const expiresIn = data.body['expires_in'];
+
+            res.json({ accessToken, expiresIn });
+        } catch (err) {
+            console.error('Error refreshing access token:', err);
+            res.status(500).send('Error refreshing access token');
+        }
     }
     
 }
