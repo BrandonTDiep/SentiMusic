@@ -5,17 +5,19 @@ const Callback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const accessToken = params.get('accessToken')
-    const refreshToken = params.get('refreshToken')
-    const expiresIn = params.get('expiresIn')
+    const params = new URLSearchParams(window.location.search);
+    const accessToken = params.get("accessToken");
+    const refreshToken = params.get("refreshToken");
+    const expiresIn = params.get("expiresIn");
+
 
     if (accessToken && refreshToken && expiresIn) {
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-        localStorage.setItem('expiresIn', expiresIn)
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        const expirationTime = new Date().getTime() + expiresIn * 1000;
+        localStorage.setItem("expirationTime", expirationTime);
     }
-
+    
     navigate('/')
 
   }, [navigate])

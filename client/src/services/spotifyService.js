@@ -19,6 +19,23 @@ export const handleSpotifyCallback = async (code) => {
     }
 };
 
+export const getAccessToken = async () => {
+    const accessToken = localStorage.getItem("accessToken")
+    const expirationTime = localStorage.getItem("expirationTime")
+
+    console.log("Access Token:", accessToken)
+    console.log("Expiration Time:", expirationTime)
+
+    if (!accessToken || new Date().getTime() > expirationTime) {
+        console.log("Access token expired or missing, refreshing...")
+        const newAccessToken = await refreshAccessToken()
+        return newAccessToken 
+    }
+
+    console.log("Returning valid access token");
+    return accessToken;
+};
+
 export const refreshAccessToken = async () => {
   const refreshToken = localStorage.getItem('refreshToken');
   if (!refreshToken) {
@@ -28,12 +45,12 @@ export const refreshAccessToken = async () => {
 
   try {
       const response = await axiosInstance.post('/api/spotify/refreshToken', {
-            refreshToken: refreshToken,
+        refreshToken,
       });
 
       const { accessToken, expiresIn } = response.data;
-
       const newExpirationTime = new Date().getTime() + expiresIn * 1000;
+      
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('expirationTime', newExpirationTime);
 
@@ -44,4 +61,18 @@ export const refreshAccessToken = async () => {
   }
 };
 
+export const getSpotifyUserData = async() => {
+  const accessToken = await getAccessToken(); 
+  try {
+    const response = await axiosInstance.get("https://api.spotify.com/v1/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Spotify user data:", error);
+    throw error;
+  }
+};
 

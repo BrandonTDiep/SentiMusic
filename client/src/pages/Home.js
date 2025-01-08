@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getGenres } from '../services/openaiService'
-import { refreshAccessToken } from '../services/spotifyService';
+import { getSpotifyUserData } from '../services/spotifyService'
 
 const Home = () => {
-    const [mood, setMood] = useState("");
-    const [genres, setGenres] = useState("");
+    const [mood, setMood] = useState("")
+    const [genres, setGenres] = useState("")
+    const [userData, setUserData] = useState(null)
   
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -14,27 +15,27 @@ const Home = () => {
         setGenres(response);
       } catch (error) {
         console.error("Error fetching recommendation:", error);
-        setGenres("Failed to get a recommendation.");
+        setGenres("Failed to get a recommendation.")
       }
     };
 
-    // Use in your API call logic
-    const getToken = async () => {
-      const now = new Date().getTime();
-      const expirationTime = localStorage.getItem('expirationTime');
-
-      if (!expirationTime || now > expirationTime) {
-          // Token has expired; refresh it
-          const newToken = await refreshAccessToken();
-          return newToken;
-      }
-
-      return localStorage.getItem('accessToken');
-    };
+    useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          const user = await getSpotifyUserData()
+          setUserData(user)
+        } catch (error) {
+          console.error("Error fetching Spotify user data:", error);
+        }
   
+      };
+      fetchUserData();
+    }, []);
+
     return (
       <div>
         <h1>Music Recommender</h1>
+        {userData && <p>Welcome, {userData.display_name}!</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
