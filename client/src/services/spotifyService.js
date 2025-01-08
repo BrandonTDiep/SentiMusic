@@ -5,6 +5,14 @@ export const spotifyLogin = () => {
     window.location.href = `${process.env.REACT_APP_API_URL}/api/spotify/login`
 }
 
+export const spotifyLogout = () => {
+  localStorage.removeItem("accessToken")
+  localStorage.removeItem("refreshToken")
+  localStorage.removeItem("expirationTime")
+
+  window.location.reload()
+}
+
 // Function to handle callback and retrieve tokens
 export const handleSpotifyCallback = async (code) => {
     try {   

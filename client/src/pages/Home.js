@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { getGenres } from '../services/openaiService'
 import { getSpotifyUserData } from '../services/spotifyService'
+import { isUserAuthenticated } from '../utils/authUtils';
 
 const Home = () => {
     const [mood, setMood] = useState("")
     const [genres, setGenres] = useState("")
     const [userData, setUserData] = useState(null)
-  
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
+
     const handleSubmit = async (e) => {
+      // stay on same page without reloading
       e.preventDefault();
   
       try {
@@ -20,6 +23,7 @@ const Home = () => {
     };
 
     useEffect(() => {
+      setIsAuthenticated(isUserAuthenticated)
       const fetchUserData = async () => {
         try {
           const user = await getSpotifyUserData()
@@ -35,17 +39,24 @@ const Home = () => {
     return (
       <div>
         <h1>Music Recommender</h1>
-        {userData && <p>Welcome, {userData.display_name}!</p>}
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Enter your mood or feelings"
-            value={mood}
-            onChange={(e) => setMood(e.target.value)}
-          />
-          <button type="submit">Get Recommendation</button>
-        </form>
-        {genres && <p>Recommended Genres: {genres}</p>}
+        {isAuthenticated ? (
+          <>
+          {userData && <p>Welcome, {userData.display_name}!</p>}
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Enter your mood or feelings"
+                value={mood}
+                onChange={(e) => setMood(e.target.value)}
+              />
+              <button type="submit">Get Recommendation</button>
+            </form>
+            {genres && <p>Recommended Genres: {genres}</p>}
+          </>
+        ) : (
+          <p>Please login!</p>
+        )}
+        
       </div>
     );
 }
