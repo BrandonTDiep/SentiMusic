@@ -86,13 +86,12 @@ module.exports = {
             const spotifyApi = new SpotifyWebApi({
                 clientId: process.env.SPOTIFY_CLIENT_ID,
                 clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-                redirectUri: process.env.SPOTIFY_REDIRECT_URL
             });
 
             // Set the refresh token on the Spotify API instance
             spotifyApi.setRefreshToken(refreshToken);
 
-            const data = await spotifyApi.refreshAccessToken(refreshToken);
+            const data = await spotifyApi.refreshAccessToken();
             const accessToken = data.body['access_token'];
             const expiresIn = data.body['expires_in'];
 

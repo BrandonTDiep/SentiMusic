@@ -1,4 +1,9 @@
 import axiosInstance from '../utils/axiosInstance'
+import SpotifyWebApi from "spotify-web-api-node"
+
+const spotifyApi = new SpotifyWebApi({
+  clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+})
 
 export const spotifyLogin = () => {
     // redirect the user to the login endpoint
@@ -83,4 +88,38 @@ export const getSpotifyUserData = async() => {
     throw error;
   }
 };
+
+export const getSpotifySongs = async(genre, popularityThreshold=20) => {
+  const accessToken = await getAccessToken()
+  spotifyApi.setAccessToken(accessToken)
+
+  try {
+    const searchResult = await spotifyApi.searchTracks(`genre: ${genre}`, { 
+      limit: 10, 
+      market: 'from_token' 
+    })
+
+    const filteredSongs = searchResult.body.tracks.items.filter((track) => track.popularity >= popularityThreshold)
+    console.log(filteredSongs)
+
+    // map the filtered songs to the desired structure
+    return filteredSongs.map((track) => ({
+      id: track.id,
+      name: track.name,
+      artists: track.artists.map((artist) => artist.name),
+      album: {
+        name: track.album.name, external_url: 
+        track.album.external_urls.spotify, 
+        image: track.album.images[1].url 
+      },
+      external_url: track.external_urls.spotify,
+      preview_url: track.preview_url,
+      explicit: track.explicit,
+      popularity: track.popularity,
+    }));
+    
+  } catch (error) {
+    
+  }
+}
 
