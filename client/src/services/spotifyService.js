@@ -112,6 +112,7 @@ export const getSpotifySongs = async(genre, popularityThreshold=20) => {
         track.album.external_urls.spotify, 
         image: track.album.images[1].url 
       },
+      uri: track.uri,
       external_url: track.external_urls.spotify,
       preview_url: track.preview_url,
       explicit: track.explicit,
@@ -119,7 +120,8 @@ export const getSpotifySongs = async(genre, popularityThreshold=20) => {
     }));
     
   } catch (error) {
-    
+    console.error("Error fetching songs:", error);
+    return []; 
   }
 }
 

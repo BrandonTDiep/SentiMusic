@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { getGenres } from '../services/openaiService'
 import { getSpotifySongs, getSpotifyUserData } from '../services/spotifyService'
 import { isUserAuthenticated } from '../utils/authUtils';
-
+import Player from '../components/Player';
 const Home = () => {
     const [mood, setMood] = useState("")
     const [genres, setGenres] = useState([])
     const [songs, setSongs] = useState([])
     const [userData, setUserData] = useState(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [playingTrack, setPlayingTrack] = useState()
 
     const handleSubmit = async (e) => {
       // stay on same page without reloading
@@ -36,6 +37,10 @@ const Home = () => {
         setSongs([])
       }
     };
+
+    const handlePlayingTrack = (trackUri) => {
+      setPlayingTrack(trackUri)
+    }
 
     useEffect(() => {
       setIsAuthenticated(isUserAuthenticated)
@@ -83,16 +88,19 @@ const Home = () => {
                 <h2>Recommended Songs:</h2>
                 <ul>
                   {songs.map((song) => (
-                    <li key={song.id}>
+                    <li key={`${song.id}-${song.uri}`}>
+                      <p>{song.preview_url}</p>
                       <img src={song.album.image} alt="" />
                       <strong>{song.name}</strong> by{" "}
                       {song.artists.join(", ")} -{" "}
                       <a href={song.external_url} target="_blank" rel="noopener noreferrer">
                         Listen
                       </a>
+                      <button onClick={() => handlePlayingTrack(song.uri)}>Play</button>
                     </li>
                   ))}
                 </ul>
+                <Player trackUri={playingTrack}/>
               </>
             )}
 
