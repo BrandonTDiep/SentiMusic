@@ -75,14 +75,12 @@ export const refreshAccessToken = async () => {
 };
 
 export const getSpotifyUserData = async() => {
-  const accessToken = await getAccessToken(); 
+  const accessToken = await getAccessToken()
+  spotifyApi.setAccessToken(accessToken)
+
   try {
-    const response = await axiosInstance.get("https://api.spotify.com/v1/me", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data;
+    const response = await spotifyApi.getMe()
+    return response.body;
   } catch (error) {
     console.error("Error fetching Spotify user data:", error);
     throw error;

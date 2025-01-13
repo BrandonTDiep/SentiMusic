@@ -7,7 +7,16 @@ module.exports = {
     getLogin: async (req, res) => {
 
         const state = generateRandomString(16);
-        const scopes = ['user-read-private', 'user-read-email', 'user-read-playback-state', 'user-modify-playback-state', 'streaming', 'user-library-read']
+        const scopes = [
+            'user-read-private', 
+            'user-read-email', 
+            'user-read-playback-state', 
+            'user-modify-playback-state', 
+            'streaming', 
+            'user-library-read',
+            'playlist-modify-private',
+            'playlist-modify-public'
+        ]
 
         const spotifyApi = new SpotifyWebApi({
             clientId: process.env.SPOTIFY_CLIENT_ID,
