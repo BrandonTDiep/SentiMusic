@@ -108,7 +108,7 @@ export const getSpotifySongs = async(genre, popularityThreshold=20) => {
       album: {
         name: track.album.name, external_url: 
         track.album.external_urls.spotify, 
-        image: track.album.images[1].url 
+        image: track.album.images[2].url 
       },
       uri: track.uri,
       external_url: track.external_urls.spotify,
