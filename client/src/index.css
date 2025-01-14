@@ -9,9 +9,18 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-bottom: 80px; 
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.player-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%; 
+  z-index: 1000;
 }

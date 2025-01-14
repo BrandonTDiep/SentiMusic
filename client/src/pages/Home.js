@@ -46,20 +46,19 @@ const Home = () => {
     }, []);
 
     return (
-      <div>
-        <h1>Music Recommender</h1>
+      <div className='container mx-auto px-4 my-6'>
         {isAuthenticated ? (
-          <>
-            <form onSubmit={handleSubmit}>
-    
+          <div>
+            <form onSubmit={handleSubmit} className='flex justify-center gap-2'>
               <input 
                 type="text" 
                 placeholder="Enter your mood or feelings"  
                 value={mood}  
                 onChange={(e) => setMood(e.target.value)} 
-                className="input input-bordered w-full max-w-xs" 
+                className="input input-bordered w-full max-w-md" 
               />
               <button type='submit' className="btn btn-primary">Submit</button>
+
             </form>
 
             {genres.length > 0 && (
@@ -90,12 +89,12 @@ const Home = () => {
                     </li>
                   ))}
                 </ul>
-                <Player trackUri={playingTrack}/>
               </>
             )}
-
-          </>
-          
+            <div className="player-wrapper">
+          <Player trackUri={playingTrack} />
+        </div>
+          </div>
         ) : (
           <p>Please login!</p>
         )}
