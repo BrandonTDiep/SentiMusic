@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { getGenres } from '../services/openaiService'
-import { getSpotifySongs, getSpotifyUserData } from '../services/spotifyService'
+import { getSpotifySongs } from '../services/spotifyService'
 import { isUserAuthenticated } from '../utils/authUtils';
 import Player from '../components/Player';
 const Home = () => {
     const [mood, setMood] = useState("")
     const [genres, setGenres] = useState([])
     const [songs, setSongs] = useState([])
-    const [userData, setUserData] = useState(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [playingTrack, setPlayingTrack] = useState()
 
@@ -44,16 +43,6 @@ const Home = () => {
 
     useEffect(() => {
       setIsAuthenticated(isUserAuthenticated)
-      const fetchUserData = async () => {
-        try {
-          const user = await getSpotifyUserData()
-          setUserData(user)
-        } catch (error) {
-          console.error("Error fetching Spotify user data:", error);
-        }
-  
-      };
-      fetchUserData();
     }, []);
 
     return (
@@ -61,15 +50,16 @@ const Home = () => {
         <h1>Music Recommender</h1>
         {isAuthenticated ? (
           <>
-          {userData && <p>Welcome, {userData.display_name}!</p>}
             <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Enter your mood or feelings"
-                value={mood}
-                onChange={(e) => setMood(e.target.value)}
+    
+              <input 
+                type="text" 
+                placeholder="Enter your mood or feelings"  
+                value={mood}  
+                onChange={(e) => setMood(e.target.value)} 
+                className="input input-bordered w-full max-w-xs" 
               />
-              <button type="submit">Get Recommendation</button>
+              <button type='submit' className="btn btn-primary">Submit</button>
             </form>
 
             {genres.length > 0 && (
