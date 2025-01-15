@@ -106,11 +106,12 @@ export const getSpotifySongs = async(genre, popularityThreshold=20) => {
       name: track.name,
       artists: track.artists.map((artist) => artist.name),
       album: {
-        name: track.album.name, external_url: 
-        track.album.external_urls.spotify, 
+        name: track.album.name, 
+        external_url: track.album.external_urls.spotify, 
         image: track.album.images[2].url 
       },
       uri: track.uri,
+      duration: track.duration_ms,
       external_url: track.external_urls.spotify,
       preview_url: track.preview_url,
       explicit: track.explicit,

@@ -42,6 +42,12 @@ const Home = () => {
       setPlayingTrack(trackUri)
     }
 
+    const formatDuration = (millis) => {
+      const minutes = Math.floor(millis / 60000);
+      const seconds = ((millis % 60000) / 1000).toFixed(0);
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+
     useEffect(() => {
       setIsAuthenticated(isUserAuthenticated)
     }, []);
@@ -75,29 +81,41 @@ const Home = () => {
        
             {songs.length > 0 && (
               <>
-                <h2>Recommended Songs:</h2>
-                <ul className='grid grid-cols-1 gap-5'>
-                  {songs.map((song) => (
-                    <li key={`${song.id}-${song.uri}`} className='flex items-center'>
-                      <div className='relative group' onClick={() => handlePlayingTrack(song.uri)} >
-                        <img 
-                          src={song.album.image} 
-                          alt={`album cover ${song.name}`} 
-                          className='rounded hover:opacity-75' 
-                        />
-                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                          <i className='text-white'> <Play /></i>
-                        </div>
-                      </div>
+                <div>
+                  <h2>Recommended Songs:</h2>
+                  <ul className='grid grid-cols-1 gap-5'>
+                    {songs.map((song) => (
+                        <li key={`${song.id}-${song.uri}`} className='flex items-center'>
+                          <div className='relative group' onClick={() => handlePlayingTrack(song.uri)} >
+                            <img 
+                              src={song.album.image} 
+                              alt={`album cover ${song.name}`} 
+                              className='rounded hover:opacity-75' 
+                            />
+                            <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+                              <i className='text-white'> <Play /></i>
+                            </div>
+                          </div>
 
-                      <div className='flex-grow pl-4'>
-                        <h2 className='font-bold'>{song.name}</h2>
-                        <p>{song.artists.join(", ")}</p>
-                      </div>
-                      
-                    </li>
-                  ))}
-                </ul>
+                          <div className='flex-grow pl-4'>
+                            <h2 className='font-bold'>{song.name}</h2>
+                            <p>{song.artists.join(", ")}</p>
+                          </div>
+
+                          <div className='flex flex-col'>
+                            {formatDuration(song.duration)}
+                            <button onClick={() => handlePlayingTrack(song.uri)}>+</button>
+                          </div>
+                          
+                        </li>
+                      ))}
+                    </ul>
+                </div>
+
+                <div>
+
+                </div>
+                
               </>
             )}
             <div className="player-wrapper">
