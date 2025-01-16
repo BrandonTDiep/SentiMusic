@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
+import SongList from '../components/SongList'
 import { getGenres } from '../services/openaiService'
 import { getSpotifySongs } from '../services/spotifyService'
 import { isUserAuthenticated } from '../utils/authUtils';
-import { Play, CircleX, CirclePlus   } from 'lucide-react';
 import Player from '../components/Player';
 const Home = () => {
     const [mood, setMood] = useState("")
@@ -51,12 +51,6 @@ const Home = () => {
       )
     }
 
-    const formatDuration = (millis) => {
-      const minutes = Math.floor(millis / 60000);
-      const seconds = ((millis % 60000) / 1000).toFixed(0);
-      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    };
-
     useEffect(() => {
       setIsAuthenticated(isUserAuthenticated)
     }, []);
@@ -92,91 +86,14 @@ const Home = () => {
               {songs.length > 0 && (
                 <div className='col-span-2'>
                   <h2>Recommended Songs:</h2>
-                  <ul className='grid grid-cols-1 gap-5'>
-                    {[...new Map(songs.map((song) => [song.uri, song])).values()].map((song) => (
-                        <li key={`${song.id}`} className='flex items-center relative group' onClick={() => handlePlayingTrack(song.uri)}>
-                          <div className='relative group' >
-                            <img 
-                              src={song.album.image} 
-                              alt={`album cover ${song.name}`} 
-                              className='rounded hover:opacity-75' 
-                            />
-                            <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                              <i className='text-white'> <Play /></i>
-                            </div>
-                          </div>
-
-                          <div className='flex-grow pl-4'>
-                            <h2 className='font-bold'>{song.name}</h2>
-                            <p>{song.artists.join(", ")}</p>
-                          </div>
-
-                          <div className='flex flex-row gap-6 not:group-hover'>
-                            <button onClick={(e) => {
-                                e.stopPropagation()  // prevent li onClick from being triggered
-                                handleTogglePlaylistTrack(song)
-                              }}>
-                              {playlist.some((track) => track.id === song.id) ? 
-                              (                        
-                                <CircleX />
-                              )
-                              : 
-                               <CirclePlus className='hover:text-white' />
-                              }
-                            </button>
-                            {formatDuration(song.duration)}
-                            
-                          </div>
-                          
-                        </li>
-                      ))}
-                    </ul>
+                  <SongList songs={songs} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
                 </div>  
               )}
 
               <aside>
                 <h2>Playlist</h2>
-                <ul className='grid grid-cols-1  gap-5'>
-                  {playlist && playlist.map((song) => (
-                      <li key={`${song.id}`} className='flex items-center relative group' onClick={() => handlePlayingTrack(song.uri)}>
-                        <div className='relative group' >
-                          <img 
-                            src={song.album.image} 
-                            alt={`album cover ${song.name}`} 
-                            className='rounded hover:opacity-75' 
-                          />
-                          <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                            <i className='text-white'> <Play /></i>
-                          </div>
-                        </div>
-
-                        <div className='flex-grow pl-4'>
-                          <h2 className='font-bold'>{song.name}</h2>
-                          <p>{song.artists.join(", ")}</p>
-                        </div>
-
-                        <div className='flex flex-row gap-6 not:group-hover'>
-                          <button onClick={(e) => {
-                              e.stopPropagation()  // prevent li onClick from being triggered
-                              handleTogglePlaylistTrack(song)
-                            }}>
-                            {playlist.some((track) => track.id === song.id) ? 
-                            (                        
-                              <CircleX className='hover:text-white' />
-                            )
-                            : 
-                             <CirclePlus className='hover:text-white' />
-                            }
-                          </button>
-                          {formatDuration(song.duration)}
-                          
-                        </div>
-                        
-                      </li>
-                  ))}
-                </ul> 
+                <SongList songs={playlist} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
                 <button className="btn btn-block mt-5">Create Playlist</button>
-  
               </aside>
 
             </div>
