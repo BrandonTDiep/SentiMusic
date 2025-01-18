@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import SongList from '../components/SongList'
 import { getGenres } from '../services/openaiService'
-import { getSpotifySongs } from '../services/spotifyService'
+import { createSpotifyPlaylist, getSpotifySongs } from '../services/spotifyService'
 import { isUserAuthenticated } from '../utils/authUtils';
 import Player from '../components/Player';
 const Home = () => {
     const [mood, setMood] = useState("")
     const [genres, setGenres] = useState([])
     const [playlist, setPlaylist] = useState([])
+    const [playlistName, setPlaylistName] = useState("")
+    const [playlistDescription, setPlaylistDescription] = useState("")
     const [songs, setSongs] = useState([])
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [playingTrack, setPlayingTrack] = useState()
@@ -51,6 +53,12 @@ const Home = () => {
       )
     }
 
+    const handlePlaylistSubmit = async (e) => {
+        e.preventDefault()
+        document.getElementById("playlist_modal").close(); // Close modal after submission
+        await createSpotifyPlaylist(playlistName, playlistDescription, playlist)
+    }
+
     useEffect(() => {
       setIsAuthenticated(isUserAuthenticated)
     }, []);
@@ -86,14 +94,55 @@ const Home = () => {
               {songs.length > 0 && (
                 <div className='col-span-2'>
                   <h2>Recommended Songs:</h2>
-                  <SongList songs={songs} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
+                  <SongList songs={[...new Map(songs.map((song) => [song.uri, song])).values()]} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
                 </div>  
               )}
 
               <aside>
                 <h2>Playlist</h2>
                 <SongList songs={playlist} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
-                <button className="btn btn-block mt-5">Create Playlist</button>
+                <button className="btn btn-block mt-5" type='button' onClick={()=>document.getElementById('playlist_modal').showModal()}>Create Playlist</button>
+                
+                <dialog id="playlist_modal" className="modal">
+                  <div className="modal-box">
+                    <h3 className="font-bold text-lg">Create Playlist</h3>
+                    
+                    <form method="dialog" onSubmit={handlePlaylistSubmit} className='py-4'>
+                      <button type='button' 
+                        onClick={() => document.getElementById("playlist_modal").close()} 
+                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                          ✕
+                      </button>
+                      <div className='mb-3'>
+                        <label for="playlist-name" className="label label-text">Name:</label>
+                        <input 
+                          id='playlist-name' 
+                          type="text" 
+                          placeholder="Type here" 
+                          className="input input-bordered w-full max-w-lg" 
+                          onChange={(e) => setPlaylistName(e.target.value)} 
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label for="playlist-description" className="label label-text">Description:</label>
+                        <input 
+                          id='playlist-description' 
+                          type="text" 
+                          placeholder="Type here" 
+                          className="input input-bordered w-full max-w-lg" 
+                          onChange={(e) => setPlaylistDescription(e.target.value)} 
+                        />
+                      </div>
+
+                      <div className='modal-action'>
+                        <button type='button' className="btn" onClick={() => document.getElementById("playlist_modal").close()}>Close</button>
+                        <button type='submit' className="btn btn-outline btn-success">Submit</button>
+                      </div>                   
+                    </form>
+                  </div>
+                </dialog>
               </aside>
 
             </div>

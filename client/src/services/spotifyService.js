@@ -124,3 +124,22 @@ export const getSpotifySongs = async(genre, popularityThreshold=20) => {
   }
 }
 
+export const createSpotifyPlaylist = async (playlistName, playlistDescription, playlistSongs) => {
+  const accessToken = await getAccessToken()
+  spotifyApi.setAccessToken(accessToken)
+
+  try {
+    const playlist = await spotifyApi.createPlaylist(playlistName, {description: playlistDescription, public: true})
+    const songsUris = playlistSongs.map((song) => song.uri)
+
+    await spotifyApi.addTracksToPlaylist(playlist.body.id, songsUris)
+  
+
+    
+  } catch (error) {
+    console.error("Error creating spotify playlist:", error);
+    return []; 
+  }
+
+}
+

@@ -31,7 +31,7 @@ const SongList = ({ songs, playlist, handlePlayingTrack, handleTogglePlaylistTra
             <button onClick={(e) => {
                 e.stopPropagation()  // prevent li onClick from being triggered
                 handleTogglePlaylistTrack(song)
-              }}>
+              }} className='tooltip' data-tip={playlist.some((track) => track.id === song.id) ? 'Remove from playlist' : 'Add to playlist'}>
               {playlist.some((track) => track.id === song.id) ? 
               (                        
                 <CircleX />
