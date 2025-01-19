@@ -90,18 +90,26 @@ const Home = () => {
               </div>
              )}
 
-            <div className='grid grid-cols-3 gap-24'>
-              {songs.length > 0 && (
-                <div className='col-span-2'>
-                  <h2>Recommended Songs:</h2>
-                  <SongList songs={[...new Map(songs.map((song) => [song.uri, song])).values()]} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
-                </div>  
-              )}
+            <div className='grid grid-cols-3 gap-24 my-32'>
 
+              <section className='col-span-2'>
+                <h2 className='text-2xl font-extrabold mb-10'>Recommended Songs:</h2>
+                {songs.length > 0 && (
+                  <div>
+                    <SongList songs={[...new Map(songs.map((song) => [song.uri, song])).values()]} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
+                  </div>  
+                )}
+              </section>
+            
               <aside>
-                <h2>Playlist</h2>
+                <h2 className='text-2xl font-extrabold mb-10'>Playlist</h2>
                 <SongList songs={playlist} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
-                <button className="btn btn-block mt-5" type='button' onClick={()=>document.getElementById('playlist_modal').showModal()}>Create Playlist</button>
+                {playlist.length > 0 && <button 
+                  className="btn btn-block mt-5 btn-primary" 
+                  type='button' 
+                  onClick={()=>document.getElementById('playlist_modal').showModal()}>
+                    Create Playlist
+                </button>}
                 
                 <dialog id="playlist_modal" className="modal">
                   <div className="modal-box">
@@ -138,7 +146,7 @@ const Home = () => {
 
                       <div className='modal-action'>
                         <button type='button' className="btn" onClick={() => document.getElementById("playlist_modal").close()}>Close</button>
-                        <button type='submit' className="btn btn-outline btn-success">Submit</button>
+                        <button type='submit' className="btn btn-outline">Submit</button>
                       </div>                   
                     </form>
                   </div>

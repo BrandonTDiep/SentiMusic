@@ -10,7 +10,7 @@ const SongList = ({ songs, playlist, handlePlayingTrack, handleTogglePlaylistTra
   return (
     <ul className='grid grid-cols-1 gap-5'>
     {songs.map((song) => (
-        <li key={`${song.id}`} className='flex items-center relative group' onClick={() => handlePlayingTrack(song.uri)}>
+        <li key={`${song.id}`} className='pr-5 flex items-center relative group rounded hover:bg-zinc-600 hover:bg-opacity-30' onClick={() => handlePlayingTrack(song.uri)} >
           <div className='relative group' >
             <img 
               src={song.album.image} 
@@ -36,7 +36,7 @@ const SongList = ({ songs, playlist, handlePlayingTrack, handleTogglePlaylistTra
               (                        
                 <CircleX />
               ): 
-               <CirclePlus className='hover:text-white' />
+                <CirclePlus/>
               }
             </button>
             {formatDuration(song.duration)}

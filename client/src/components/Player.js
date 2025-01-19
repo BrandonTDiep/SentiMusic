@@ -23,7 +23,7 @@ const Player = ({ trackUri }) => {
     return (
         <SpotifyPlayer
             token={accessToken}
-            showSaveIcon
+            //showSaveIcon
             callback={state => {
                 if (!state.isPlaying) setPlay(false)
             }}
@@ -31,7 +31,7 @@ const Player = ({ trackUri }) => {
             uris={trackUri ? [trackUri] : []}
             styles={{
                 activeColor: '#fff',
-                bgColor: '#15191E',
+                bgColor: '#0D0D0D',
                 color: '#fff',
                 loaderColor: '#fff',
                 sliderColor: '#1cb954',

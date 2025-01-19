@@ -36,7 +36,7 @@ const Navbar = () => {
         <div className="navbar bg-base-300">
             <div className='container mx-auto'>
                 <div className="flex-1">
-                    <a className="btn btn-ghost text-xl">SentiMusic</a>
+                    <a className="btn btn-ghost text-2xl font-extrabold ">SentiMusic</a>
                 </div>
                 
                 <label className="grid cursor-pointer place-items-center mr-3">
