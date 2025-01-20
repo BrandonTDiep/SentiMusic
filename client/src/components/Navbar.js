@@ -3,6 +3,7 @@ import { spotifyLogin, spotifyLogout } from '../services/spotifyService'
 import {  getSpotifyUserData } from '../services/spotifyService'
 import { isUserAuthenticated } from '../utils/authUtils';
 import defaultImg from '../assets/default_img.webp'
+import logo from '../assets/logo.png'
 
 const Navbar = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -35,8 +36,8 @@ const Navbar = () => {
     return (
         <div className="navbar bg-base-300">
             <div className='container mx-auto'>
-                <div className="flex-1">
-                    <a className="btn btn-ghost text-2xl font-extrabold ">SentiMusic</a>
+                <div className="flex flex-1 flex-row items-center">
+                    <img src={logo} alt="SentiMusic logo" className='w-[60px] h-[60px]'/>
                 </div>
                 
                 <label className="grid cursor-pointer place-items-center mr-3">

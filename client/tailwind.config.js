@@ -17,8 +17,8 @@ module.exports = {
       "dark",
       {
         mytheme: {
-          "primary": "#1DB954",
-          "primary-content": "#ffffff",
+          "primary": "#1CB954",
+          "primary-content": "#000000",
           "secondary": "#121212",
           "secondary-content": "#b3b3b3",
           "accent": "#1ED760",

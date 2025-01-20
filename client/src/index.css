@@ -6,11 +6,15 @@ body {
   padding-bottom: 80px; 
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+@layer base {
+  body {
+    @apply font-primary; /* Primary font for all text by default */
+  }
 
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-secondary; /* Secondary font for headings */
+  }
+}
 .player-wrapper {
   position: fixed;
   bottom: 0;

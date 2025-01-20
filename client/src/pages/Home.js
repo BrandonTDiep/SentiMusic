@@ -4,6 +4,7 @@ import { getGenres } from '../services/openaiService'
 import { createSpotifyPlaylist, getSpotifySongs } from '../services/spotifyService'
 import { isUserAuthenticated } from '../utils/authUtils';
 import Player from '../components/Player';
+import logo from '../assets/logo.png'
 const Home = () => {
     const [mood, setMood] = useState("")
     const [genres, setGenres] = useState([])
@@ -20,9 +21,7 @@ const Home = () => {
   
       try {
         const response = await getGenres(mood);
-        console.log(response)
         const genreList = response.split(", ").map((genre) => genre.trim())
-        console.log(genreList)
         setGenres(genreList);
 
         const allSongs = []
@@ -65,6 +64,11 @@ const Home = () => {
 
     return (
       <div className='container mx-auto px-4 my-6'>
+        <section className='text-center mb-5'>
+          <img src={logo} alt="SentiMusic logo" className='mx-auto'/>
+          <p className='text-lg font-extrabold'>Find songs based on your mood.</p>
+        </section>
+        
         {isAuthenticated ? (
           <div>
             <form onSubmit={handleSubmit} className='flex justify-center gap-2'>
@@ -78,17 +82,6 @@ const Home = () => {
               <button type='submit' className="btn btn-primary">Search</button>
 
             </form>
-
-            {genres.length > 0 && (
-              <div>
-                <h2>Recommended Genres:</h2>
-                <ul>
-                  {genres.map((genre, index) => (
-                    <li key={index}>{genre}</li>
-                  ))}
-                </ul>
-              </div>
-             )}
 
             <div className='grid grid-cols-3 gap-24 my-32'>
 
@@ -122,7 +115,7 @@ const Home = () => {
                           ✕
                       </button>
                       <div className='mb-3'>
-                        <label for="playlist-name" className="label label-text">Name:</label>
+                        <label htmlFor="playlist-name" className="label label-text">Name:</label>
                         <input 
                           id='playlist-name' 
                           type="text" 
@@ -160,7 +153,7 @@ const Home = () => {
             </div>
         </div>
         ) : (
-          <p>Please login!</p>
+          <p className='text-center text-2xl font-extrabold'>Please login!</p>
         )}
         
       </div>
