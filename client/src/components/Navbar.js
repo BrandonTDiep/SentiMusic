@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { spotifyLogin, spotifyLogout } from '../services/spotifyService'
 import {  getSpotifyUserData } from '../services/spotifyService'
 import { isUserAuthenticated } from '../utils/authUtils';
@@ -37,7 +38,9 @@ const Navbar = () => {
         <div className="navbar bg-base-300">
             <div className='container mx-auto'>
                 <div className="flex flex-1 flex-row items-center">
-                    <img src={logo} alt="SentiMusic logo" className='w-[60px] h-[60px]'/>
+                    <Link to="/">
+                        <img src={logo} alt="SentiMusic logo" className='w-[60px] h-[60px]'/>
+                    </Link>
                 </div>
                 
                 <label className="grid cursor-pointer place-items-center mr-3">

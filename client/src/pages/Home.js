@@ -13,21 +13,20 @@ const Home = () => {
     const [playlistDescription, setPlaylistDescription] = useState("")
     const [songs, setSongs] = useState([])
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [playingTrack, setPlayingTrack] = useState()
 
     const handleSubmit = async (e) => {
       // stay on same page without reloading
       e.preventDefault();
-  
+      setIsLoading(true)
       try {
         const response = await getGenres(mood);
         const genreList = response.split(", ").map((genre) => genre.trim())
         setGenres(genreList);
-
         const allSongs = []
         for(const genre of genreList){
           const genreSongs = await getSpotifySongs(genre)
-          console.log(genreSongs)
           allSongs.push(...genreSongs)
         }
         setSongs(allSongs)
@@ -37,6 +36,9 @@ const Home = () => {
         console.error("Error fetching recommendation:", error);
         setGenres("Failed to get a recommendation.")
         setSongs([])
+      }
+      finally{
+        setIsLoading(false)
       }
     };
 
@@ -54,7 +56,7 @@ const Home = () => {
 
     const handlePlaylistSubmit = async (e) => {
         e.preventDefault()
-        document.getElementById("playlist_modal").close(); // Close modal after submission
+        document.getElementById("playlist_modal").close()
         await createSpotifyPlaylist(playlistName, playlistDescription, playlist)
     }
 
@@ -66,11 +68,12 @@ const Home = () => {
       <div className='container mx-auto px-4 my-6'>
         <section className='text-center mb-5'>
           <img src={logo} alt="SentiMusic logo" className='mx-auto'/>
-          <p className='text-lg font-extrabold'>Find songs based on your mood.</p>
+          <p className='text-lg font-extrabold'>Find songs based on your mood and add them to Spotify.</p>
         </section>
         
         {isAuthenticated ? (
           <div>
+            {/* Search Form */}
             <form onSubmit={handleSubmit} className='flex justify-center gap-2'>
               <input 
                 type="text" 
@@ -80,29 +83,34 @@ const Home = () => {
                 className="input input-bordered w-full max-w-md" 
               />
               <button type='submit' className="btn btn-primary">Search</button>
-
             </form>
 
-            <div className='grid grid-cols-3 gap-24 my-32'>
-
-              <section className='col-span-2'>
-                <h2 className='text-2xl font-extrabold mb-10'>Recommended Songs:</h2>
-                {songs.length > 0 && (
+            {songs.length > 0 && 
+            <div className='grid grid-cols-1 gap-y-24 md:grid-cols-3 md:gap-24 my-32'>
+              {/* Recommend Songs */}
+              <section className='md: col-span-2'>
+                <h2 className='text-2xl font-extrabold mb-10'>Recommended Songs</h2>
+                  {isLoading ?
+                  <span className="loading loading-bars loading-lg"></span>
+                  :
                   <div>
                     <SongList songs={[...new Map(songs.map((song) => [song.uri, song])).values()]} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
-                  </div>  
-                )}
+                  </div>                   
+                 }
               </section>
-            
-              <aside>
+              
+              {/* Playlist */}
+              <aside className='md:col-span-1'>
                 <h2 className='text-2xl font-extrabold mb-10'>Playlist</h2>
                 <SongList songs={playlist} playlist={playlist} handlePlayingTrack={handlePlayingTrack} handleTogglePlaylistTrack={handleTogglePlaylistTrack} />
-                {playlist.length > 0 && <button 
-                  className="btn btn-block mt-5 btn-primary" 
-                  type='button' 
-                  onClick={()=>document.getElementById('playlist_modal').showModal()}>
-                    Create Playlist
-                </button>}
+                {playlist.length > 0 && 
+                  <button 
+                    className="btn btn-block mt-5 btn-primary" 
+                    type='button' 
+                    onClick={()=>document.getElementById('playlist_modal').showModal()}>
+                      Create Playlist
+                  </button>
+                }
                 
                 <dialog id="playlist_modal" className="modal">
                   <div className="modal-box">
@@ -127,7 +135,7 @@ const Home = () => {
                       </div>
 
                       <div>
-                        <label for="playlist-description" className="label label-text">Description:</label>
+                        <label htmlFor="playlist-description" className="label label-text">Description:</label>
                         <input 
                           id='playlist-description' 
                           type="text" 
@@ -146,8 +154,9 @@ const Home = () => {
                 </dialog>
               </aside>
 
-            </div>
-            
+            </div>}
+                
+            {/* Player */}
             <div className="player-wrapper">
               <Player trackUri={playingTrack} />
             </div>

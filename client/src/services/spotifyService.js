@@ -24,7 +24,6 @@ export const handleSpotifyCallback = async (code) => {
       const response = await axiosInstance.get(`/api/spotify/callback`, {
         params: { code },
       });
-      console.log(response.data)
       return response.data;
     } catch (error) {
       console.error('Error during Spotify callback:', error);
@@ -35,9 +34,6 @@ export const handleSpotifyCallback = async (code) => {
 export const getAccessToken = async () => {
     const accessToken = localStorage.getItem("accessToken")
     const expirationTime = localStorage.getItem("expirationTime")
-
-    console.log("Access Token:", accessToken)
-    console.log("Expiration Time:", expirationTime)
 
     if (!accessToken || new Date().getTime() > expirationTime) {
         console.log("Access token expired or missing, refreshing...")
@@ -98,7 +94,6 @@ export const getSpotifySongs = async(genre, popularityThreshold=20) => {
     })
 
     const filteredSongs = searchResult.body.tracks.items.filter((track) => track.popularity >= popularityThreshold)
-    console.log(filteredSongs)
 
     // map the filtered songs to the desired structure
     return filteredSongs.map((track) => ({
@@ -134,12 +129,9 @@ export const createSpotifyPlaylist = async (playlistName, playlistDescription, p
 
     await spotifyApi.addTracksToPlaylist(playlist.body.id, songsUris)
   
-
-    
   } catch (error) {
     console.error("Error creating spotify playlist:", error);
     return []; 
   }
-
 }
 
