@@ -45,6 +45,8 @@ const Navbar = () => {
                 
                 <label className="grid cursor-pointer place-items-center mr-3">
                     <input
+                        id='toggle-theme'
+                        name='toggle-theme'
                         type="checkbox"
                         value="light"
                         className="toggle theme-controller bg-base-content col-span-2 col-start-1 row-start-1" />
@@ -82,8 +84,8 @@ const Navbar = () => {
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                             <div className="w-10 rounded-full flex">
                                 <img
-                                    alt="Spotify User Profile Picture"
-                                    src={userData && userData.images.length != 0 ? userData.images[1].url : defaultImg}
+                                    alt="Spotify User"
+                                    src={userData && userData.images.length !== 0 ? userData.images[1].url : defaultImg}
                                 />
                                 <p>{userData && userData.display_name}</p>
                             </div>
@@ -91,7 +93,7 @@ const Navbar = () => {
                         <ul
                             tabIndex={0}
                             className="menu menu-sm dropdown-content bg-base-300 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                            <li><a onClick={handleAuthAction}>{isAuthenticated ? "Logout" : "Login"}</a></li>
+                            <li><Link onClick={handleAuthAction}>{isAuthenticated ? "Logout" : "Login"}</Link></li>
                         </ul>
                     </div>
                 </div> 

@@ -18,7 +18,7 @@ const Player = ({ trackUri }) => {
         if (trackUri) setPlay(true)
     }, [trackUri])
 
-    if (!accessToken) return <div>Loading...</div> // Show a loading state until the token is ready
+    if (!accessToken) return <div>Loading...</div>
 
     return (
         <SpotifyPlayer

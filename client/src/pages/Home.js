@@ -7,7 +7,6 @@ import Player from '../components/Player';
 import logo from '../assets/logo.png'
 const Home = () => {
     const [mood, setMood] = useState("")
-    const [genres, setGenres] = useState([])
     const [playlist, setPlaylist] = useState([])
     const [playlistName, setPlaylistName] = useState("")
     const [playlistDescription, setPlaylistDescription] = useState("")
@@ -23,7 +22,6 @@ const Home = () => {
       try {
         const response = await getGenres(mood);
         const genreList = response.split(", ").map((genre) => genre.trim())
-        setGenres(genreList);
         const allSongs = []
         for(const genre of genreList){
           const genreSongs = await getSpotifySongs(genre)
@@ -34,7 +32,6 @@ const Home = () => {
         
       } catch (error) {
         console.error("Error fetching recommendation:", error);
-        setGenres("Failed to get a recommendation.")
         setSongs([])
       }
       finally{
@@ -74,9 +71,11 @@ const Home = () => {
         {isAuthenticated ? (
           <div>
             {/* Search Form */}
-            <form onSubmit={handleSubmit} className='flex justify-center gap-2'>
+            <form onSubmit={handleSubmit} className='flex justify-center gap-2' name='songGenerationForm'>
               <input 
                 type="text" 
+                id='mood'
+                name='mood'
                 placeholder="Enter your mood or feelings"  
                 value={mood}  
                 onChange={(e) => setMood(e.target.value)} 
@@ -86,7 +85,7 @@ const Home = () => {
             </form>
 
             {songs.length > 0 && 
-            <div className='grid grid-cols-1 gap-y-24 md:grid-cols-3 md:gap-24 my-32'>
+            <div className='grid grid-cols-1 gap-y-24 my-24 md:grid-cols-3 md:gap-24 md:my-32'>
               {/* Recommend Songs */}
               <section className='md: col-span-2'>
                 <h2 className='text-2xl font-extrabold mb-10'>Recommended Songs</h2>
@@ -116,7 +115,7 @@ const Home = () => {
                   <div className="modal-box">
                     <h3 className="font-bold text-lg">Create Playlist</h3>
                     
-                    <form method="dialog" onSubmit={handlePlaylistSubmit} className='py-4'>
+                    <form method="dialog" onSubmit={handlePlaylistSubmit} className='py-4' name='playlistCreationForm'>
                       <button type='button' 
                         onClick={() => document.getElementById("playlist_modal").close()} 
                         className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -125,7 +124,8 @@ const Home = () => {
                       <div className='mb-3'>
                         <label htmlFor="playlist-name" className="label label-text">Name:</label>
                         <input 
-                          id='playlist-name' 
+                          id='playlist-name'
+                          name='playlist-name' 
                           type="text" 
                           placeholder="Type here" 
                           className="input input-bordered w-full max-w-lg" 
@@ -138,6 +138,7 @@ const Home = () => {
                         <label htmlFor="playlist-description" className="label label-text">Description:</label>
                         <input 
                           id='playlist-description' 
+                          name='playlist-description'
                           type="text" 
                           placeholder="Type here" 
                           className="input input-bordered w-full max-w-lg" 
@@ -162,7 +163,7 @@ const Home = () => {
             </div>
         </div>
         ) : (
-          <p className='text-center text-2xl font-extrabold'>Please login!</p>
+          <p className='text-center text-2xl font-extrabold'>Please login with your Spotify Account!</p>
         )}
         
       </div>
