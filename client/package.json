@@ -8,6 +8,8 @@
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
     "lucide-react": "^0.471.1",
+    "nth-check": "^2.1.1",
+    "postcss": "^8.5.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1",
