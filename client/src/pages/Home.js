@@ -100,7 +100,7 @@ const Home = () => {
 
       // Clear interval on component unmount
       return () => clearInterval(tokenRefreshInterval);
-    }, []);
+    }, [TOKEN_CHECK_INTERVAL]);
 
     return (
       <div className='container mx-auto px-4 my-6'>
