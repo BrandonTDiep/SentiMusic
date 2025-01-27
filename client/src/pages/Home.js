@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import SongList from '../components/SongList'
 import { getGenres } from '../services/openaiService'
-import { createSpotifyPlaylist, getSpotifySongs } from '../services/spotifyService'
-import { isUserAuthenticated } from '../utils/authUtils';
+import { createSpotifyPlaylist, getSpotifySongs, refreshAccessToken } from '../services/spotifyService'
+import { isUserAuthenticated, getRemainingTokenTime } from '../utils/authUtils';
 import Player from '../components/Player';
 import logo from '../assets/logo.png'
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+
 const Home = () => {
     const [mood, setMood] = useState("")
     const [playlist, setPlaylist] = useState([])
@@ -21,7 +23,9 @@ const Home = () => {
       setIsLoading(true)
       try {
         const response = await getGenres(mood);
+        setMood('')
         const genreList = response.split(", ").map((genre) => genre.trim())
+        console.log(genreList)
         const allSongs = []
         for(const genre of genreList){
           const genreSongs = await getSpotifySongs(genre)
@@ -57,12 +61,51 @@ const Home = () => {
         await createSpotifyPlaylist(playlistName, playlistDescription, playlist)
     }
 
+    const notify = () => {
+      if (playlistName) {
+        toast.success('Saved to Playlist!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
+    };
+
+
+    const TOKEN_CHECK_INTERVAL = 60 * 1000; // 1 minute
+
     useEffect(() => {
-      setIsAuthenticated(isUserAuthenticated)
+      setIsAuthenticated(isUserAuthenticated());
+
+      // Set up an interval to refresh the token
+      const tokenRefreshInterval = setInterval(async () => {
+          const remainingTime = getRemainingTokenTime();
+
+          // If less than 5 minutes remain, refresh the token
+          if (remainingTime < 5 * 60 * 1000) {
+              console.log("Token is about to expire, refreshing...");
+              const newToken = await refreshAccessToken();
+              if (!newToken) {
+                  console.warn("Failed to refresh token, user might need to re-login.");
+                  clearInterval(tokenRefreshInterval);
+              }
+          }
+      }, TOKEN_CHECK_INTERVAL);
+
+      // Clear interval on component unmount
+      return () => clearInterval(tokenRefreshInterval);
     }, []);
 
     return (
       <div className='container mx-auto px-4 my-6'>
+        <ToastContainer />
+
         <section className='text-center mb-5'>
           <img src={logo} alt="SentiMusic logo" className='mx-auto'/>
           <p className='text-lg font-extrabold'>Find songs based on your mood and add them to Spotify.</p>
@@ -148,7 +191,7 @@ const Home = () => {
 
                       <div className='modal-action'>
                         <button type='button' className="btn" onClick={() => document.getElementById("playlist_modal").close()}>Close</button>
-                        <button type='submit' className="btn btn-outline">Submit</button>
+                        <button type='submit' className="btn btn-outline" onClick={notify}>Submit</button>
                       </div>                   
                     </form>
                   </div>

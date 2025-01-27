@@ -5,11 +5,17 @@ const spotifyApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
 })
 
+/**
+ * Redirects the user to Spotify login
+ */
 export const spotifyLogin = () => {
     // redirect the user to the login endpoint
     window.location.href = `${process.env.REACT_APP_API_URL}/api/spotify/login`
 }
 
+/**
+ * Logout the user with their Spotify credentials
+ */
 export const spotifyLogout = () => {
   localStorage.removeItem("accessToken")
   localStorage.removeItem("refreshToken")
@@ -18,7 +24,11 @@ export const spotifyLogout = () => {
   window.location.reload()
 }
 
-// Function to handle callback and retrieve tokens
+
+/**
+ *  Handle callback and retrieve tokens
+ * @returns {Promise<Object>} - code
+ */
 export const handleSpotifyCallback = async (code) => {
     try {   
       const response = await axiosInstance.get(`/api/spotify/callback`, {
@@ -31,6 +41,10 @@ export const handleSpotifyCallback = async (code) => {
     }
 };
 
+/**
+ * Gets the access token from local storage
+ * @returns {Promise<Object>} - new access token
+ */
 export const getAccessToken = async () => {
     const accessToken = localStorage.getItem("accessToken")
     const expirationTime = localStorage.getItem("expirationTime")
@@ -45,10 +59,15 @@ export const getAccessToken = async () => {
     return accessToken;
 };
 
+/**
+ * Refresh the access token if it expires
+ * @returns {Promise<Object>} - new access token
+ */
 export const refreshAccessToken = async () => {
   const refreshToken = localStorage.getItem('refreshToken');
   if (!refreshToken) {
       console.error('No refresh token available');
+      spotifyLogout()
       return null;
   }
 
@@ -70,6 +89,10 @@ export const refreshAccessToken = async () => {
   }
 };
 
+/**
+ * Fetch genre recommendation based on mood
+ * @returns {Promise<Object>} - spotify user data
+ */
 export const getSpotifyUserData = async() => {
   const accessToken = await getAccessToken()
   spotifyApi.setAccessToken(accessToken)
@@ -83,14 +106,21 @@ export const getSpotifyUserData = async() => {
   }
 };
 
+/**
+ * Fetch genre recommendation based on mood
+ * @param {string} genre - Genres generated from OpenAI
+ * @param {string} popularityThreshold - Popularity of the song
+ * @returns {Promise<Object>} - Songs based on the genre
+ */
 export const getSpotifySongs = async(genre, popularityThreshold=20) => {
   const accessToken = await getAccessToken()
   spotifyApi.setAccessToken(accessToken)
-
+  const randomOffset = Math.floor(Math.random() * 100);
   try {
     const searchResult = await spotifyApi.searchTracks(`genre: ${genre}`, { 
-      limit: 10, 
-      market: 'from_token' 
+      limit: 50, 
+      market: 'from_token',
+      offset: randomOffset
     })
 
     const filteredSongs = searchResult.body.tracks.items.filter((track) => track.popularity >= popularityThreshold)
@@ -119,6 +149,14 @@ export const getSpotifySongs = async(genre, popularityThreshold=20) => {
   }
 }
 
+/**
+ * Create spotify playlist to your spotify account
+ * @param {string} playlistName - playlist description
+ * @param {string} playlistDescription - playlist description
+ * @param {Object} playlistSongs - array of playlist songs
+
+ * @returns {Promise<Object>} - Songs based on the genre
+ */
 export const createSpotifyPlaylist = async (playlistName, playlistDescription, playlistSongs) => {
   const accessToken = await getAccessToken()
   spotifyApi.setAccessToken(accessToken)
