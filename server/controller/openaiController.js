@@ -2,8 +2,8 @@ const OpenAI = require("openai");
 
 
 const client = new OpenAI({
-    apiKey: process.env.GROQ_API_KEY,
-    baseURL: "https://api.groq.com/openai/v1",
+    apiKey: process.env.OPENAI_KEY,
+    baseURL: process.env.OPENAI_BASE_URL,
 });
   
 
@@ -18,7 +18,7 @@ module.exports = {
       
         try {
           const response = await client.chat.completions.create({
-            model: "llama3-8b-8192",
+            model: process.env.MODEL,
             messages: [
               { role: "system", content: process.env.OPENAI_PROMPT },
               { role: "user", content: `${mood}.` },

@@ -115,7 +115,7 @@ export const getSpotifyUserData = async() => {
 export const getSpotifySongs = async(genre, popularityThreshold=20) => {
   const accessToken = await getAccessToken()
   spotifyApi.setAccessToken(accessToken)
-  const randomOffset = Math.floor(Math.random() * 100);
+  const randomOffset = Math.floor(Math.random() * 150);
   try {
     const searchResult = await spotifyApi.searchTracks(`genre: ${genre}`, { 
       limit: 50, 

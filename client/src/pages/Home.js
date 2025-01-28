@@ -25,7 +25,6 @@ const Home = () => {
         const response = await getGenres(mood);
         setMood('')
         const genreList = response.split(", ").map((genre) => genre.trim())
-        console.log(genreList)
         const allSongs = []
         for(const genre of genreList){
           const genreSongs = await getSpotifySongs(genre)
